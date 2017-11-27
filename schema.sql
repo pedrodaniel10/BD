@@ -38,22 +38,22 @@ create table constituida
    constraint fk_constituida_categoria foreign key(categoria) references categoria(nome)
       on delete cascade on update cascade);
 
-create table produto
-  (ean int not null unique,
-   design varchar(120) not null,
-   categoria varchar(50) not null,
-   forn_primario varchar(80) not null,
-   data date not null,
-   constraint pk_produto primary key(ean),
-   constraint fk_produto_categoria foreign key(categoria) references categoria(nome)
-      on delete cascade on update cascade,
-   contrainst fk_produto_fornecedor foreign key(forn_primario) references fornecedor(nif)
-      on delete cascade on update cascade);
-
 create table fornecedor
   (nif int not null unique,
    nome varchar(80) not null,
    constraint pk_fornecedor primary key(nif));
+
+create table produto
+  (ean bigint not null unique,
+   design varchar(120) not null,
+   categoria varchar(50) not null,
+   forn_primario int not null,
+   data date not null,
+   constraint pk_produto primary key(ean),
+   constraint fk_produto_categoria foreign key(categoria) references categoria(nome)
+      on delete cascade on update cascade,
+   constraint fk_produto_fornecedor foreign key(forn_primario) references fornecedor(nif)
+      on delete cascade on update cascade);
 
 create table fornece_sec
   (nif int not null unique,
@@ -70,8 +70,8 @@ create table corredor
 
 create table prateleira
   (nro int not null,
-   lado smallint not null unique,
-   altura smallint not null unique,
+   lado smallint not null,
+   altura smallint not null,
    constraint pk_prateleira primary key(lado, altura),
    constraint fk_prateleira_corredor foreign key(nro) references corredor(nro)
       on delete cascade on update cascade);
