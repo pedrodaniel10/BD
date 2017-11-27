@@ -42,7 +42,7 @@ create table produto
   (ean int not null unique,
    design varchar(120) not null,
    categoria varchar(50) not null,
-   forn_primario varchar(50) not null,
+   forn_primario varchar(80) not null,
    data date not null,
    constraint pk_produto primary key(ean),
    constraint fk_produto_categoria foreign key(categoria) references categoria(nome)
@@ -52,12 +52,12 @@ create table produto
 
 create table fornecedor
   (nif int not null unique,
-   nome varchar(50) not null,
+   nome varchar(80) not null,
    constraint pk_fornecedor primary key(nif));
 
 create table fornece_sec
   (nif int not null unique,
-   ean int not null unique,
+   ean bigint not null unique,
    constraint fk_fornece_sec_fornecedor foreign key(nif) references fornecedor(nif)
       on delete cascade on update cascade,
    constraint fk_fornece_sec_produto foreign key(ean) references produto(ean)
@@ -70,8 +70,39 @@ create table corredor
 
 create table prateleira
   (nro int not null,
-   lado int not null unique,
-   altura int not null unique,
+   lado smallint not null unique,
+   altura smallint not null unique,
    constraint pk_prateleira primary key(lado, altura),
    constraint fk_prateleira_corredor foreign key(nro) references corredor(nro)
+      on delete cascade on update cascade);
+
+create table planograma
+  (ean bigint not null,
+   nro int not null,
+   lado smallint not null,
+   altura smallint not null,
+   face int not null,
+   unidades int not null,
+   loc int not null,
+   constraint fk_planograma_produto foreign key(ean) references produto(ean)
+      on delete cascade on update cascade,
+   constraint fk_planograma_prateleira foreign key(nro, lado, altura) references prateleira(nro, lado, altura)
+      on delete cascade on update cascade);
+
+create table evento_reposicao
+  (operador varchar(80) not null,
+   instante timestamp not null,
+   constraint pk_evento_reposicao primary key(operador, instante));
+
+create table reposicao
+  (ean bigint not null,
+   nro int not null,
+   lado smallint not null,
+   altura smallint not null,
+   operador varchar(80) not null,
+   instante timestamp not null,
+   unidades int not null,
+   constraint fk_reposicao_planograma foreign key(ean, nro, lado, altura) references planograma(ean, nro, lado, altura)
+      on delete cascade on update cascade,
+   constraint fk_reposicao_evento_reposicao foreign key(operador, instante) references evento_reposicao(operador, instante)
       on delete cascade on update cascade);
