@@ -123,6 +123,6 @@ insert into evento_reposicao(operador, instante)
 
 insert into reposicao(ean, nro, lado, altura, operador, instante, unidades)
     values
-    (8, 5, 1, 2, 3, 9, 4, 'Antelmo', timestamp '2017-11-10 11:11:16', 4),
-    (5, 1, 2, 1, 5, 30, 5, 'Manuel', timestamp '2017-11-10 11:11:13', 3),
-    (2, 3, 1, 3, 2, 6, 3, 'Jesus', timestamp '2017-11-10 11:11:11', 2);
+    (8, 5, 1, 2, 'Antelmo', timestamp '2017-11-10 11:11:16', 4),
+    (5, 1, 2, 1, 'Manuel', timestamp '2017-11-10 11:11:13', 3),
+    (2, 3, 1, 3, 'Jesus', timestamp '2017-11-10 11:11:11', 2);
