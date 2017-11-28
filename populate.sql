@@ -56,7 +56,16 @@ insert into fornecedor(nif, nome)
     (567893213, 'Estabon Supplies'),
     (945678431, 'Bontinente'),
     (489723432, 'Beronimo Bartins'),
-    (847238654, 'Lar e Casa');
+    (847238654, 'Lar e Casa'),
+    (348787423, 'Simplesmente Simples'),
+    (192374489, 'Costa e Costa e Costa'),
+    (746317931, 'Alfredo e Jacinto Ltd.'),
+    (847319321, 'Solesticio De Enverno'),
+    (123456789, 'Baia das Margaridas'),
+    (987654321, 'Asmecasso'),
+    (389754678, 'Poarjhse Ghutern Ltd.'),
+    (213989018, 'Colunas e Linhas Ltd.'),
+    (761783123, 'BXS');
 
 insert into produto(ean, design, categoria, forn_primario, data)
     values
@@ -67,14 +76,41 @@ insert into produto(ean, design, categoria, forn_primario, data)
     (5, 'Cebel', 'Queijos', 438043829, '2014-07-05'),
     (6, 'Bibosa', 'Lacticinios', 438043829, '2014-07-05'),
     (7, 'Trocatudo', 'Mercearia', 567893213, '2013-01-01'),
-    (8, 'Ping pong', 'Brinquedos', 847238654, '2010-01-01');
+    (8, 'Ping pong', 'Brinquedos', 847238654, '2010-01-01'),
+    (9, 'Ovos vegan', 'Vegan', 348787423, '2010-10-01'),
+    (10, 'Manteiga Fresca', 'Manteigas', 348787423, '2010-10-01'),
+    (11, 'Flamengo', 'Queijos', 348787423, '2010-10-01'),
+    (12, 'Rato', 'Brinquedos', 348787423, '2010-10-01'),
+    (13, 'Biscas Sacolas', 'Caes', 348787423, '2010-10-01'),
+    (14, 'Pedigray', 'Gatos', 348787423, '2010-10-01');
 
 insert into fornece_sec(nif, ean)
     values
     (378753913, 5),
     (489723432, 8),
     (732792012, 1),
-    (945678431, 4);
+    (945678431, 4),
+    (761783123, 9),
+    (213989018, 9),
+    (389754678, 9),
+    (987654321, 9),
+    (123456789, 9),
+    (847319321, 9),
+    (746317931, 9),
+    (192374489, 9),
+    (847238654, 9),
+    (489723432, 9),
+    (348787423, 9),
+    (761783123, 10),
+    (213989018, 10),
+    (389754678, 10),
+    (987654321, 10),
+    (123456789, 10),
+    (847319321, 10),
+    (746317931, 10),
+    (192374489, 10),
+    (847238654, 10),
+    (489723432, 10);
 
 insert into corredor(nro, largura)
     values
@@ -129,6 +165,7 @@ insert into evento_reposicao(operador, instante)
     ('Jesus', timestamp '2017-11-10 11:11:11'),
     ('Jose', timestamp '2017-11-10 11:11:12'),
     ('Manuel', timestamp '2017-11-10 11:11:13'),
+    ('Manuel', timestamp '2017-11-11 11:11:13'),
     ('Edilson', timestamp '2017-11-10 11:11:14'),
     ('Ericlene', timestamp '2017-11-10 11:11:15'),
     ('Antelmo', timestamp '2017-11-10 11:11:16'),
@@ -138,4 +175,6 @@ insert into reposicao(ean, nro, lado, altura, operador, instante, unidades)
     values
     (8, 5, 1, 2, 'Antelmo', timestamp '2017-11-10 11:11:16', 4),
     (5, 1, 2, 1, 'Manuel', timestamp '2017-11-10 11:11:13', 3),
-    (2, 3, 1, 3, 'Jesus', timestamp '2017-11-10 11:11:11', 2);
+    (5, 1, 2, 1, 'Manuel', timestamp '2017-11-11 11:11:13', 5),
+    (2, 3, 1, 3, 'Jesus', timestamp '2017-11-10 11:11:11', 2),
+    (2, 3, 1, 3, 'Edilson', timestamp '2017-11-10 11:11:14', 1);
