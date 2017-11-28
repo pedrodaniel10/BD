@@ -1,3 +1,16 @@
+delete from categoria;
+delete from categoria_simples;
+delete from super_categoria;
+delete from constituida;
+delete from fornecedor;
+delete from produto;
+delete from fornece_sec;
+delete from corredor;
+delete from prateleira;
+delete from planograma;
+delete from evento_reposicao;
+delete from reposicao;
+
 insert into categoria(nome)
     values
     ('Lacticinios'),
@@ -51,7 +64,7 @@ insert into produto(ean, design, categoria, forn_primario, data)
     (2, 'Ola', 'Vegan', 489723432, '2017-05-21'),
     (3, 'Forlectibane', 'Caes', 489723432, '2015-02-28'),
     (4, 'Purpura', 'Gatos', 847238654, '2015-03-01'),
-    (5, 'Cebel', 'Queijo', 438043829, '2014-07-05'),
+    (5, 'Cebel', 'Queijos', 438043829, '2014-07-05'),
     (6, 'Bibosa', 'Lacticinios', 438043829, '2014-07-05'),
     (7, 'Trocatudo', 'Mercearia', 567893213, '2013-01-01'),
     (8, 'Ping pong', 'Brinquedos', 847238654, '2010-01-01');
