@@ -56,8 +56,8 @@ create table produto
       on delete cascade on update cascade);
 
 create table fornece_sec
-  (nif int not null unique,
-   ean bigint not null unique,
+  (nif int not null,
+   ean bigint not null,
    constraint fk_fornece_sec_fornecedor foreign key(nif) references fornecedor(nif)
       on delete cascade on update cascade,
    constraint fk_fornece_sec_produto foreign key(ean) references produto(ean)
@@ -74,7 +74,8 @@ create table prateleira
    altura smallint not null,
    constraint pk_prateleira primary key(lado, altura),
    constraint fk_prateleira_corredor foreign key(nro) references corredor(nro)
-      on delete cascade on update cascade);
+      on delete cascade on update cascade,
+   constraint unique_prateleira unique(nro, lado, altura));
 
 create table planograma
   (ean bigint not null,
@@ -87,7 +88,8 @@ create table planograma
    constraint fk_planograma_produto foreign key(ean) references produto(ean)
       on delete cascade on update cascade,
    constraint fk_planograma_prateleira foreign key(nro, lado, altura) references prateleira(nro, lado, altura)
-      on delete cascade on update cascade);
+      on delete cascade on update cascade,
+   constraint unique_planograma unique(ean, nro, lado, altura));
 
 create table evento_reposicao
   (operador varchar(80) not null,
@@ -105,4 +107,5 @@ create table reposicao
    constraint fk_reposicao_planograma foreign key(ean, nro, lado, altura) references planograma(ean, nro, lado, altura)
       on delete cascade on update cascade,
    constraint fk_reposicao_evento_reposicao foreign key(operador, instante) references evento_reposicao(operador, instante)
-      on delete cascade on update cascade);
+      on delete cascade on update cascade,
+    constraint unique_planograma unique(ean, nro, lado, altura, operador, instante));
