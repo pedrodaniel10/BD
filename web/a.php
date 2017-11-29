@@ -57,21 +57,19 @@
             $db->query("commit;");
         }
         if ($mode == "remove") {
-            $db->query("start transaction;");
-
             // verificar se existem produtos da categoria a remover
-            $prep = $db->prepare("SELECT ean FROM produto WHERE categoria = ?");
+            $prep = $db->prepare("SELECT count(ean) FROM produto WHERE categoria = ?");
             $prep->bindParam(1, $nome, PDO::PARAM_STR, 50);
             $prep->execute();
-            if ($prep->rowCount() > 0) {
-                // se sim, TODO
+            $produtosAssoc = $prep->fetch();
+            if ($produtosAssoc['count'] > 0) {
+                echo("<h5><font color=\"red\">Existe {$produtosAssoc['count']} produto(s) associado(s) a esta categoria. Devem ser eliminados primeiro.</font></h5>");
             }
-
-            $prep = $db->prepare("DELETE FROM categoria WHERE nome = ?");
-            $prep->bindParam(1, $nome, PDO::PARAM_STR, 50);
-            $prep->execute();
-
-            $db->query("commit;");
+            else {
+                $prep = $db->prepare("DELETE FROM categoria WHERE nome = ?");
+                $prep->bindParam(1, $nome, PDO::PARAM_STR, 50);
+                $prep->execute();
+            }
         }
 
         echo("<h4>Criar categoria</h4>");
@@ -95,7 +93,7 @@
         echo("<table border=\"1\" cellspacing=\"5\" style=\"text-align: center\">\n");
         echo("<tr>\n");
         echo("<td><b>Nome</b></td>\n");
-        echo("<td>Remover</td>\n");
+        echo("<td><b>Remover</b></td>\n");
         echo("</tr>\n");
         foreach($result as $row){
             echo("<tr>\n");

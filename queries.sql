@@ -3,7 +3,7 @@ select nome
 from (select nif
       from ((select ean, forn_primario as nif, categoria from produto)
             union
-            (select nif, ean, categoria
+            (select ean, nif, categoria
              from fornece_sec
                 natural join
                 (select ean, categoria from produto) as fornece_prim )) as produto_fornecedores
@@ -12,7 +12,7 @@ from (select nif
                                      from ((select ean, forn_primario as nif, categoria
                                             from produto)
                                            union
-                                           (select nif, ean, categoria
+                                           (select ean, nif, categoria
                                             from fornece_sec
                                                natural join
                                                (select ean, categoria from produto) as fornece_prim )) as nifs_resposta
