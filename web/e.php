@@ -9,12 +9,7 @@
     </form>
 <?php
 
-  function checkSubCats($categories) {
-
-    $num_cats = 0;
-    foreach($categories as $row) {
-        $num_cats++;
-    }
+  function checkSubCats($categories, $db) {
 
     foreach($categories as $row) {
         $prep = $db->prepare("SELECT categoria
@@ -25,8 +20,10 @@
         $subcats = $prep->fetchAll();
         $subcats = array_filter($subcats);
         if (!empty($subcats)) {
-            //array_merge($resultCats[0], $subcats[0]);
-            checkSubCats($subcats);
+            foreach($subcats as $row) {
+                array_push($GLOBALS['resultCats'], $row);
+            }
+            checkSubCats($subcats, $db);
         }
     }
   }
@@ -59,22 +56,21 @@
         echo("<br><br><a href='index.html'>Voltar</a><br><br>");
     }
     elseif ($mode == "list"){
-
         echo("<h3>Nome = $nome</h3>");
         $prep = $db->prepare("SELECT categoria
                               FROM constituida
                               WHERE super_categoria = :nome");
         $prep->bindParam(":nome", $nome);
         $prep->execute();
-        $resultCats = $prep->fetchAll();
+        $GLOBALS['resultCats'] = $prep->fetchAll();
 
-        //checkSubCats($resultCats);
+        checkSubCats($GLOBALS['resultCats'], $db);
 
         echo("<table border=\"1\" cellspacing=\"5\" style=\"text-align: center\">\n");
         echo("<tr>\n");
         echo("<td><b>Nome</b></td>\n");
         echo("</tr>\n");
-        foreach($resultCats as $row){
+        foreach($GLOBALS['resultCats'] as $row){
             echo("<tr>\n");
             echo("<td>{$row['categoria']}</td>\n");
             echo("</tr>\n");

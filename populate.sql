@@ -21,19 +21,23 @@ insert into categoria(nome)
     ('Manteigas'),
     ('Queijos'),
     ('Caes'),
+    ('Frutas'),
+    ('Soja'),
     ('Gatos');
 
 insert into categoria_simples(nome)
     values
-    ('Vegan'),
     ('Manteigas'),
     ('Queijos'),
     ('Brinquedos'),
     ('Caes'),
+    ('Frutas'),
+    ('Soja'),
     ('Gatos');
 
 insert into super_categoria(nome)
     values
+    ('Vegan'),
     ('Lacticinios'),
     ('Mercearia'),
     ('Animais');
@@ -41,6 +45,8 @@ insert into super_categoria(nome)
 insert into constituida(super_categoria, categoria)
     values
     ('Mercearia', 'Vegan'),
+    ('Mercearia', 'Frutas'),
+    ('Vegan', 'Soja'),
     ('Lacticinios', 'Manteigas'),
     ('Lacticinios', 'Queijos'),
     ('Lacticinios', 'Mercearia'),
