@@ -1,10 +1,10 @@
 <html>
   <body>
     <h3>Listar sub-categorias de uma super-categoria</h3>
-    <form action="c.php" method="post">
+    <form action="e.php" method="post">
       <p><input type="hidden" name="mode" value="list"/></p>
       <p>Nome: <input type="text" name="nome"/>
-        <input type="submit" value="Listar"/>
+        <input type="submit" value="Procurar"/>
       </p>
     </form>
 <?php
@@ -12,7 +12,7 @@
   function checkSubCats($categories) {
 
     $num_cats = 0;
-    foreach($categories) {
+    foreach($categories as $row) {
         $num_cats++;
     }
 
@@ -25,7 +25,7 @@
         $subcats = $prep->fetchAll();
         $subcats = array_filter($subcats);
         if (!empty($subcats)) {
-            array_merge($result[0], $subcats[0]);
+            //array_merge($resultCats[0], $subcats[0]);
             checkSubCats($subcats);
         }
     }
@@ -37,7 +37,7 @@
     include 'config.php';
 
     $mode = isset($_REQUEST['mode']) ? $_REQUEST['mode'] : "";
-    $ean = isset($_REQUEST['nome']) ? $_REQUEST['nome'] : "";
+    $nome = isset($_REQUEST['nome']) ? $_REQUEST['nome'] : "";
     if ($mode == "home"){
 
       $prep = $db->prepare("SELECT nome FROM super_categoria");
@@ -52,7 +52,7 @@
         foreach($result as $row){
             echo("<tr>\n");
             echo("<td>{$row['nome']}</td>\n");
-            echo("<td><a href=\"c.php?mode=list&nome={$row['nome']}\">Listar sub-categorias</a></td>\n");
+            echo("<td><a href=\"e.php?mode=list&nome={$row['nome']}\">Listar sub-categorias</a></td>\n");
             echo("</tr>\n");
         }
         echo("</table>\n");
@@ -66,21 +66,21 @@
                               WHERE super_categoria = :nome");
         $prep->bindParam(":nome", $nome);
         $prep->execute();
-        $result = $prep->fetchAll();
+        $resultCats = $prep->fetchAll();
 
-        checkSubCats($result);
+        //checkSubCats($resultCats);
 
         echo("<table border=\"1\" cellspacing=\"5\" style=\"text-align: center\">\n");
         echo("<tr>\n");
         echo("<td><b>Nome</b></td>\n");
         echo("</tr>\n");
-        foreach($result as $row){
+        foreach($resultCats as $row){
             echo("<tr>\n");
             echo("<td>{$row['categoria']}</td>\n");
             echo("</tr>\n");
         }
         echo("</table>\n");
-        echo("<br><br><a href='c.php?mode=home'>Voltar</a><br><br>");
+        echo("<br><br><a href='e.php?mode=home'>Voltar</a><br><br>");
     }
   }
   catch (PDOException $e){
