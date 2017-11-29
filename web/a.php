@@ -139,7 +139,7 @@
             $nome = $nome . "%";
 
             if ($nome != "%%") {
-                $prep = $db->prepare("SELECT nome FROM categoria WHERE nome LIKE ? ORDER BY nome");
+                $prep = $db->prepare("SELECT nome FROM categoria WHERE UPPER(nome) LIKE UPPER(?) ORDER BY nome");
                 try{
                   $prep->bindParam(1, $nome, PDO::PARAM_STR, 50);
                   $prep->execute();
