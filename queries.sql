@@ -28,13 +28,19 @@ natural join fornecedor;
 
 -- b)
 select nif, nome
-from (select forn_primario as nif
-      from produto
-      group by nif
-      having count(distinct categoria) = (select count(nome)
-                                          from categoria_simples)) as produtos
-     natural join
-     fornecedor;
+from(
+        select forn_primario as nif
+        from produto
+        where categoria in(
+                            select nome
+                            from categoria_simples
+                          )
+        group by nif
+        having count(categoria)= (
+                                    select count(nome)
+                                    from categoria_simples
+                                 )
+    ) as nifs_division natural join fornecedor;
 
 -- c)
 select ean
