@@ -19,7 +19,7 @@
 
       echo("<form action=\"b.php?mode=insert_product\" method=\"post\">");
       echo("<p>EAN:<input type=\"text\" name=\"ean\"/>");
-      echo("<p>Designa&ccedil;&atilde;o: <input type=\"text\" name=\"ean\"/>");
+      echo("<p>Designa&ccedil;&atilde;o: <input type=\"text\" name=\"design\"/>");
 
       //categoria drop down
       echo("<p>Categoria: <select name=\"categoria\">");
@@ -78,13 +78,80 @@
       echo("<br><br><a href='b.php?mode=home'>Voltar</a><br><br>");
     }
     elseif($mode == "insert_product"){
-      $forn_sec_selected = $_POST['nifs'];
-      foreach($forn_sec_selected as $nif){
-        if($nif == $_REQUEST['forn_primario']){
-          echo("<h5><font color=\"red\">ERRO: Fornecedor Secund&aacute;rio n&atilde;o pode ser o mesmo que o Fornecedor Prim&aacute;rio.</font></h5>");
+      echo("<h3>Inserir produto</h3>");
+      $forn_sec_selected = isset($_POST['nifs']) ? $_POST['nifs'] : [];
+      $forn_primario = $_REQUEST['forn_primario'];
+      $end = FALSE;
+
+      /*Verifying fornecedor secundario has atleast 1
+       *Verifying fornecedor primario != fornecedor secundario*/
+      if($forn_sec_selected == []){
+        echo("<h5><font color=\"red\">ERRO: Nenhum Fornecedor Secund&aacute;rio foi selecionado. Deve ser selecionado pelo menos um.</font></h5>");
+        $end = TRUE;
+      }
+      else{
+        foreach($forn_sec_selected as $nif){
+          if($nif == $forn_primario){
+            echo("<h5><font color=\"red\">ERRO: Fornecedor Secund&aacute;rio n&atilde;o pode ser o mesmo que o Fornecedor Prim&aacute;rio.</font></h5>");
+            $end = TRUE;
+          }
         }
       }
 
+      if($end){}
+      else{
+        //form information
+        $ean = isset($_REQUEST['ean']) ? $_REQUEST['ean'] : "";
+        $design = isset($_REQUEST['design']) ? $_REQUEST['design'] : "";
+        $categoria = $_REQUEST['categoria'];
+        //date
+        $day = isset($_REQUEST['day']) ? $_REQUEST['day'] : "";
+        $month = isset($_REQUEST['month']) ? $_REQUEST['month'] : "";
+        $year = isset($_REQUEST['year']) ? $_REQUEST['year'] : "";
+        $date = $year . "-" . $month . "-" . $day;
+
+        $prep = $db->prepare("INSERT INTO produto(ean, design, categoria, forn_primario, data)
+                              VALUES (?, ?, ?, ?, ?)");
+
+          $prep->bindParam(1,$ean,PDO::PARAM_INT);
+          $prep->bindParam(2,$design,PDO::PARAM_STR,120);
+          $prep->bindParam(3,$categoria,PDO::PARAM_STR,50);
+          $prep->bindParam(4,$forn_primario,PDO::PARAM_INT);
+          $prep->bindParam(5,$date,PDO::PARAM_STR,10);
+
+        $db->query("BEGIN");
+        //add product
+        try{
+          $prep->execute();
+        }
+        catch (PDOException $e){
+          switch($e->getCode()){
+            case "22P02": //ean not an int
+              echo("<h5><font color=\"red\">ERRO: EAN tem de ser um inteiro.</font></h5>");
+              break;
+            case "22007": //invalid date
+              echo("<h5><font color=\"red\">ERRO: Data inv&aacute;lida.</font></h5>");
+              break;
+            case "23505": //violates pk_produto
+              echo("<h5><font color=\"red\">ERRO: O EAN $ean j&aacute; existe.</font></h5>");
+              break;
+          }
+          echo("<h5><font color=\"red\">ERRO: {$e->getCode()}.</font></h5>");
+          $db->query("ROLLBACK");
+          //echo("<p>ERROR: {$e->getMessage()}</p>");
+        }
+
+        //add forn_sec
+        foreach($forn_sec_selected as $nif){
+          $prep = $db->prepare("INSERT INTO fornece_sec(nif, ean)
+                                VALUES (?,?)");
+          $prep->bindParam(1,$nif,PDO::PARAM_INT);
+          $prep->bindParam(2,$ean,PDO::PARAM_INT);
+          $prep->execute();
+        }
+
+        $db->query("COMMIT");
+      }
       echo("<br><br><a href='b.php?mode=insert_form'>Voltar</a><br><br>");
     }
   }
