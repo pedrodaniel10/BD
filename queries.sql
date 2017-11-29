@@ -1,23 +1,30 @@
 -- a)
 select nome
-from (select nif
-      from ((select ean, forn_primario as nif, categoria from produto)
-            union
-            (select ean, nif, categoria
-             from fornece_sec
-                natural join
-                (select ean, categoria from produto) as fornece_prim )) as produto_fornecedores
-      group by nif
-      having count(categoria) >= all(select count(categoria)
-                                     from ((select ean, forn_primario as nif, categoria
-                                            from produto)
-                                           union
-                                           (select ean, nif, categoria
-                                            from fornece_sec
-                                               natural join
-                                               (select ean, categoria from produto) as fornece_prim )) as nifs_resposta
-                                    group by nif)) as nifs_mais_categorias
-      natural join fornecedor;
+from (
+  select nif
+  from (
+    (select ean, forn_primario as nif, categoria from produto)
+    union (
+      select ean, nif, categoria
+      from fornece_sec natural join
+      (select ean, categoria from produto) as cat_produto
+    )
+  ) as produto_fornecedores
+  group by nif
+  having count(categoria) >= all(
+    select count(categoria)
+    from (
+      (select ean, forn_primario as nif, categoria from produto)
+      union (
+        select ean, nif, categoria
+        from fornece_sec natural join
+          (select ean, categoria from produto) as cat_produto
+      )
+    ) as nifs_resposta
+    group by nif
+  )
+) as nifs_mais_categorias
+natural join fornecedor;
 
 -- b)
 select nif, nome

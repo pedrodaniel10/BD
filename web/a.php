@@ -66,9 +66,45 @@
                 echo("<h5><font color=\"red\">ERRO: Existe {$produtosAssoc['count']} produto(s) associado(s) a esta categoria. Devem ser eliminados primeiro.</font></h5>");
             }
             else {
+                // verificar $nome tem uma super categoria e se sim, verificar se e necessario converter para categoria simples
+                $prep = $db->prepare("
+                    SELECT count(categoria)
+                    FROM constituida
+                    WHERE super_categoria IN (
+                        SELECT super_categoria
+                        FROM constituida
+                        WHERE categoria = ?
+                    )");
+                $prep->bindParam(1, $nome, PDO::PARAM_STR, 50);
+                $prep->execute();
+                $categoriasIrmas = $prep->fetch();
+                $categoriasIrmas = $categoriasIrmas['count'];
+
+                if ($categoriasIrmas == 1) {
+                    $db->query("start transaction;");
+
+                    $prep = $db->prepare("SELECT super_categoria FROM constituida WHERE categoria = ?");
+                    $prep->bindParam(1, $nome, PDO::PARAM_STR, 50);
+                    $prep->execute();
+                    $super_name = $prep->fetch();
+                    $super_name = $super_name['super_categoria'];
+                }
+
                 $prep = $db->prepare("DELETE FROM categoria WHERE nome = ?");
                 $prep->bindParam(1, $nome, PDO::PARAM_STR, 50);
                 $prep->execute();
+
+                if ($categoriasIrmas == 1) {
+                    $prep = $db->prepare("DELETE FROM super_categoria WHERE nome = ?");
+                    $prep->bindParam(1, $super_name, PDO::PARAM_STR, 50);
+                    $prep->execute();
+
+                    $prep = $db->prepare("INSERT INTO categoria_simples VALUES (?)");
+                    $prep->bindParam(1, $super_name, PDO::PARAM_STR, 50);
+                    $prep->execute();
+
+                    $db->query("commit;");
+                }
             }
         }
 
