@@ -160,6 +160,95 @@
       }
       echo("<br><br><a href='b.php?mode=insert_form'>Voltar</a><br><br>");
     }
+    elseif($mode == "remove_form"){
+      $type = isset($_REQUEST['type']) ? $_REQUEST['type'] : "";
+      $execute = isset($_REQUEST['execute']) ? $_REQUEST['execute'] : "";
+
+      echo("<h3>Remover produto</h3>");
+      echo("<form action=\"b.php?mode=remove_form&type=search\" method=\"post\">");
+      echo("<p>EAN: <input type=\"text\" name=\"ean_search\"/>");
+      echo("<input type=\"submit\" value=\"Procurar\"/></p></form>");
+
+      if($execute == "yes"){
+        $ean = isset($_REQUEST['ean']) ? $_REQUEST['ean'] : "";
+
+        $prep = $db->prepare("DELETE FROM produto WHERE ean = ?");
+        $prep->bindParam(1, $ean, PDO::PARAM_INT);
+        try{
+          $prep->execute();
+          echo("<h5><font color=\"green\">Produto com EAN $ean removido com sucesso.</font></h5>");
+        }
+        catch (PDOException $e){
+          echo("<h5><font color=\"red\">ERRO: {$e->getCode()}:1.</font></h5>");
+          echo("<p>ERROR: {$e->getMessage()}</p>");
+        }
+      }
+
+      if($type == "search"){
+        $ean = $_REQUEST['ean_search'];
+
+        $prep = $db->prepare("SELECT ean, design FROM produto WHERE ean = ? ORDER BY ean");
+        try{
+          $prep->bindParam(1,$ean,PDO::PARAM_INT);
+          $prep->execute();
+        }
+        catch (PDOException $e){
+          echo("<h5><font color=\"red\">ERRO: EAN tem de ser um inteiro.</font></h5>");
+        }
+        $result = $prep->fetchAll();
+        if($result != FALSE || $result != []){
+          echo("<table border=\"1\" cellspacing=\"5\" style=\"text-align: center\">\n");
+          echo("<tr>\n");
+          echo("<td><b>EAN</b></td>\n");
+          echo("<td><b>Designa&ccedil;&atilde;o</b></td>\n");
+          echo("<td><b>Listar</b></td>\n");
+          echo("</tr>\n");
+        }
+        $number_rows = count($result);
+        echo("<p>Foram encontrado(s) $number_rows produto(s).</p>");
+        foreach($result as $row){
+            echo("<tr>\n");
+            echo("<td>{$row['ean']}</td>\n");
+            echo("<td>{$row['design']}</td>\n");
+            echo("<td><a href=\"b.php?mode=remove_form&execute=yes&ean={$row['ean']}\">Remover</a></td>\n");
+            echo("</tr>\n");
+        }
+        echo("</table>\n");
+        echo("<br><br><a href='b.php?mode=remove_form'>Voltar</a><br><br>");
+      }
+      else{
+        $prep = $db->prepare("SELECT ean, design FROM produto ORDER BY ean");
+        $prep->execute();
+        $result = $prep->fetchAll();
+
+        if($result != FALSE || $result != []){
+          echo("<table border=\"1\" cellspacing=\"5\" style=\"text-align: center\">\n");
+          echo("<tr>\n");
+          echo("<td><b>EAN</b></td>\n");
+          echo("<td><b>Designa&ccedil;&atilde;o</b></td>\n");
+          echo("<td><b>Listar</b></td>\n");
+          echo("</tr>\n");
+        }
+        foreach($result as $row){
+            echo("<tr>\n");
+            echo("<td>{$row['ean']}</td>\n");
+            echo("<td>{$row['design']}</td>\n");
+            echo("<td><a href=\"b.php?mode=remove_form&execute=yes&ean={$row['ean']}\">Remover</a></td>\n");
+            echo("</tr>\n");
+        }
+        echo("</table>\n");
+        echo("<br><br><a href='b.php?mode=home'>Voltar</a><br><br>");
+      }
+    }
+    elseif($mode == "remove_product"){
+      $ean = isset($_REQUEST['ean']) ? $_REQUEST['ean'] : "";
+
+      if($ean != ""){
+        $prep = $db->prepare("DELETE FROM produto WHERE ean = ?");
+        $prep->bindParam(1,$ean,PDO::PARAM_INT);
+        $prep->execute();
+      }
+    }
   }
   catch (PDOException $e){
     echo("<h5><font color=\"red\">ERRO: {$e->getCode()}:2.</font></h5>");
