@@ -14,9 +14,9 @@
     foreach($categories as $row) {
         $prep = $db->prepare("SELECT categoria
                               FROM constituida
-                              WHERE super_categoria = :nome
+                              WHERE super_categoria = ?
                               ORDER BY categoria");
-        $prep->bindParam(":nome", $row['categoria']);
+        $prep->bindParam(1, $row['categoria'], PDO::PARAM_STR, 50);
         $prep->execute();
         $subcats = $prep->fetchAll();
         $subcats = array_filter($subcats);
@@ -64,9 +64,9 @@
       $nome = $nome . "%";
 
       if ($nome != "%%") {
-          $prep = $db->prepare("SELECT nome FROM super_categoria WHERE nome LIKE :nome ORDER BY nome");
+          $prep = $db->prepare("SELECT nome FROM super_categoria WHERE nome LIKE ? ORDER BY nome");
           try{
-            $prep->bindParam(":nome", $nome);
+            $prep->bindParam(1, $nome, PDO::PARAM_STR, 50);
             $prep->execute();
           }
           catch (PDOException $e){
