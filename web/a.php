@@ -77,7 +77,7 @@
         echo("<input type=\"hidden\" name=\"mode\" value=\"add_cat\"/>");
         echo("<p>Nome da categoria: <input type=\"text\" name=\"nome\"/></p>");
         echo("<p>Categoria m&atilde;e: <select name=\"super_categoria\"><option value=\"none\">Nenhuma</option>");
-        $prep = $db->prepare("SELECT nome FROM categoria");
+        $prep = $db->prepare("SELECT nome FROM categoria ORDER BY nome");
         $prep->execute();
         $result = $prep->fetchAll();
         foreach($result as $row) {
