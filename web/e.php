@@ -14,7 +14,8 @@
     foreach($categories as $row) {
         $prep = $db->prepare("SELECT categoria
                               FROM constituida
-                              WHERE super_categoria = :nome");
+                              WHERE super_categoria = :nome
+                              ORDER BY categoria");
         $prep->bindParam(":nome", $row['categoria']);
         $prep->execute();
         $subcats = $prep->fetchAll();
@@ -37,7 +38,7 @@
     $nome = isset($_REQUEST['nome']) ? $_REQUEST['nome'] : "";
     if ($mode == "home"){
 
-      $prep = $db->prepare("SELECT nome FROM super_categoria");
+      $prep = $db->prepare("SELECT nome FROM super_categoria ORDER BY nome");
       $prep->execute();
       $result = $prep->fetchAll();
 
@@ -63,7 +64,7 @@
       $nome = $nome . "%";
 
       if ($nome != "%%") {
-          $prep = $db->prepare("SELECT nome FROM super_categoria WHERE nome LIKE :nome");
+          $prep = $db->prepare("SELECT nome FROM super_categoria WHERE nome LIKE :nome ORDER BY nome");
           try{
             $prep->bindParam(":nome", $nome);
             $prep->execute();
@@ -101,7 +102,8 @@
         echo("<h3>Nome = $nome</h3>");
         $prep = $db->prepare("SELECT categoria
                               FROM constituida
-                              WHERE super_categoria = :nome");
+                              WHERE super_categoria = :nome
+                              ORDER BY categoria");
         $prep->bindParam(":nome", $nome);
         $prep->execute();
         $GLOBALS['resultCats'] = $prep->fetchAll();
