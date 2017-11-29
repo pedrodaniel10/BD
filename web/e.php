@@ -118,7 +118,7 @@
         }
 
         $number_rows = count($GLOBALS['resultCats']);
-        echo("<p>Foram encontrado(s) $number_rows sub-categorias.</p>");
+        echo("<p>Foram encontrada(s) $number_rows sub-categorias.</p>");
 
         foreach($GLOBALS['resultCats'] as $row){
             echo("<tr>\n");
