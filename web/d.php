@@ -42,23 +42,31 @@
       $ean = $_REQUEST['ean_search'];
 
       $prep = $db->prepare("SELECT ean, design FROM produto WHERE ean = ? ORDER BY ean");
-      $prep->bindParam(1,$ean,PDO::PARAM_INT);
-      $prep->execute();
+      try{
+        $prep->bindParam(1,$ean,PDO::PARAM_INT);
+        $prep->execute();
+      }
+      catch (PDOException $e){
+        echo("<p>ERRO: EAN tem de ser um inteiro.</p>");
+      }
       $result = $prep->fetchAll();
-
-      echo("<table border=\"1\" cellspacing=\"5\" style=\"text-align: center\">\n");
-      echo("<tr>\n");
-      echo("<td><b>EAN</b></td>\n");
-      echo("<td><b>Designa&ccedil;&atilde;o</b></td>\n");
-      echo("<td><b>Listar</b></td>\n");
-      echo("</tr>\n");
-        foreach($result as $row){
-            echo("<tr>\n");
-            echo("<td>{$row['ean']}</td>\n");
-            echo("<td>{$row['design']}</td>\n");
-            echo("<td><a href=\"d.php?mode=show&ean={$row['ean']}\">Alterar</a></td>\n");
-            echo("</tr>\n");
-        }
+      if($result != FALSE || $result != []){
+        echo("<table border=\"1\" cellspacing=\"5\" style=\"text-align: center\">\n");
+        echo("<tr>\n");
+        echo("<td><b>EAN</b></td>\n");
+        echo("<td><b>Designa&ccedil;&atilde;o</b></td>\n");
+        echo("<td><b>Listar</b></td>\n");
+        echo("</tr>\n");
+      }
+      $number_rows = count($result);
+      echo("<p>Foram encontrado(s) $number_rows produto(s).</p>");
+      foreach($result as $row){
+          echo("<tr>\n");
+          echo("<td>{$row['ean']}</td>\n");
+          echo("<td>{$row['design']}</td>\n");
+          echo("<td><a href=\"d.php?mode=show&ean={$row['ean']}\">Alterar</a></td>\n");
+          echo("</tr>\n");
+      }
         echo("</table>\n");
         echo("<br><br><a href='d.php?mode=home'>Voltar</a><br><br>");
     }

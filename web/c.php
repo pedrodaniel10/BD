@@ -39,19 +39,27 @@
     }
     elseif ($mode == "search"){
 
-      $ean = $_REQUEST['ean_search'];
+        $ean = $_REQUEST['ean_search'];
 
-      $prep = $db->prepare("SELECT ean, design FROM produto WHERE ean = ? ORDER BY ean");
-      $prep->bindParam(1,$ean,PDO::PARAM_INT);
-      $prep->execute();
-      $result = $prep->fetchAll();
-
-      echo("<table border=\"1\" cellspacing=\"5\" style=\"text-align: center\">\n");
-      echo("<tr>\n");
-      echo("<td><b>EAN</b></td>\n");
-      echo("<td><b>Designa&ccedil;&atilde;o</b></td>\n");
-      echo("<td><b>Listar</b></td>\n");
-      echo("</tr>\n");
+        $prep = $db->prepare("SELECT ean, design FROM produto WHERE ean = ? ORDER BY ean");
+        try{
+          $prep->bindParam(1,$ean,PDO::PARAM_INT);
+          $prep->execute();
+        }
+        catch (PDOException $e){
+          echo("<p>ERRO: EAN tem de ser um inteiro.</p>");
+        }
+        $result = $prep->fetchAll();
+        if($result != FALSE || $result != []){
+          echo("<table border=\"1\" cellspacing=\"5\" style=\"text-align: center\">\n");
+          echo("<tr>\n");
+          echo("<td><b>EAN</b></td>\n");
+          echo("<td><b>Designa&ccedil;&atilde;o</b></td>\n");
+          echo("<td><b>Listar</b></td>\n");
+          echo("</tr>\n");
+        }
+        $number_rows = count($result);
+        echo("<p>Foram encontrado(s) $number_rows produto(s).</p>");
         foreach($result as $row){
             echo("<tr>\n");
             echo("<td>{$row['ean']}</td>\n");
@@ -67,17 +75,22 @@
         echo("<h3>EAN = $ean</h3>");
         $prep = $db->prepare("SELECT operador, instante, unidades
                               FROM evento_reposicao NATURAL JOIN reposicao
-                              WHERE ean = ?");
+                              WHERE ean = ?
+                              ORDER BY instante");
         $prep->bindParam(1,$ean,PDO::PARAM_INT);
         $prep->execute();
         $result = $prep->fetchAll();
 
-        echo("<table border=\"1\" cellspacing=\"5\" style=\"text-align: center\">\n");
-        echo("<tr>\n");
-        echo("<td><b>Operador</b></td>\n");
-        echo("<td><b>Instante</b></td>\n");
-        echo("<td><b>Unidades</b></td>\n");
-        echo("</tr>\n");
+        if($result != FALSE || $result != []){
+          echo("<table border=\"1\" cellspacing=\"5\" style=\"text-align: center\">\n");
+          echo("<tr>\n");
+          echo("<td><b>Operador</b></td>\n");
+          echo("<td><b>Instante</b></td>\n");
+          echo("<td><b>Unidades</b></td>\n");
+          echo("</tr>\n");
+        }
+        $number_rows = count($result);
+        echo("<p>Foram encontrado(s) $number_rows evento(s) de reposi&ccedil&atildeo.</p>");
         foreach($result as $row){
             echo("<tr>\n");
             echo("<td>{$row['operador']}</td>\n");
