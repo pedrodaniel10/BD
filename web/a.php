@@ -126,19 +126,68 @@
         echo("</form>");
 
         echo("<h4>Eliminar categoria</h4>");
-        echo("<table border=\"1\" cellspacing=\"5\" style=\"text-align: center\">\n");
-        echo("<tr>\n");
-        echo("<td><b>Nome</b></td>\n");
-        echo("<td><b>Remover</b></td>\n");
-        echo("</tr>\n");
-        foreach($result as $row){
-            echo("<tr>\n");
-            echo("<td>{$row['nome']}</td>\n");
-            echo("<td><a href=\"a.php?mode=remove&nome={$row['nome']}\">Remover</a></td>\n");
-            echo("</tr>\n");
+        echo("<form action=\"a.php\" method=\"post\">
+          <p><input type=\"hidden\" name=\"mode\" value=\"search\"/></p>
+          <p>Nome: <input type=\"text\" name=\"nome_search\"/>
+            <input type=\"submit\" value=\"Procurar\"/>
+          </p>
+        </form>");
+
+        if ($mode == "search"){
+            $nome = $_REQUEST['nome_search'];
+            $nome = "%" . $nome;
+            $nome = $nome . "%";
+
+            if ($nome != "%%") {
+                $prep = $db->prepare("SELECT nome FROM categoria WHERE nome LIKE ? ORDER BY nome");
+                try{
+                  $prep->bindParam(1, $nome, PDO::PARAM_STR, 50);
+                  $prep->execute();
+                }
+                catch (PDOException $e){
+                  echo("<p>ERRO: Nome nao valido.</p>");
+                }
+                $result = $prep->fetchAll();
+            }
+            else {
+                $result = [];
+            }
+
+            if($result != FALSE || $result != []){
+              echo("<table border=\"1\" cellspacing=\"5\" style=\"text-align: center\">\n");
+              echo("<tr>\n");
+              echo("<td><b>Nome</b></td>\n");
+              echo("<td><b>Remover</b></td>\n");
+              echo("</tr>\n");
+            }
+            $number_rows = count($result);
+            echo("<p>Foram encontrada(s) $number_rows categoria(s).</p>");
+            foreach($result as $row){
+              echo("<tr>\n");
+              echo("<td>{$row['nome']}</td>\n");
+              echo("<td><a href=\"a.php?mode=remove&nome={$row['nome']}\">Remover</a></td>\n");
+              echo("</tr>\n");
+            }
+            echo("</table>\n");
+            echo("<br><br><a href='a.php'>Voltar</a><br><br>");
         }
-        echo("</table>\n");
-        echo("<br><br><a href='index.html'>Voltar</a><br><br>");
+        else {
+            echo("<table border=\"1\" cellspacing=\"5\" style=\"text-align: center\">\n");
+            echo("<tr>\n");
+            echo("<td><b>Nome</b></td>\n");
+            echo("<td><b>Remover</b></td>\n");
+            echo("</tr>\n");
+            foreach($result as $row){
+                echo("<tr>\n");
+                echo("<td>{$row['nome']}</td>\n");
+                echo("<td><a href=\"a.php?mode=remove&nome={$row['nome']}\">Remover</a></td>\n");
+                echo("</tr>\n");
+            }
+            echo("</table>\n");
+            echo("<br><br><a href='index.html'>Voltar</a><br><br>");
+        }
+
+
 
     }
     catch (PDOException $e){
