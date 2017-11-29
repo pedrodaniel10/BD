@@ -14,35 +14,35 @@
             $db->query("start transaction;");
 
             try {
-                $prep = $db->prepare("INSERT INTO categoria(nome) VALUES (:nome)");
-                $prep->bindParam(":nome", $nome);
+                $prep = $db->prepare("INSERT INTO categoria(nome) VALUES (?)");
+                $prep->bindParam(1, $nome, PDO::PARAM_STR, 50);
                 $prep->execute();
 
-                $prep = $db->prepare("INSERT INTO categoria_simples(nome) VALUES (:nome)");
-                $prep->bindParam(":nome", $nome);
+                $prep = $db->prepare("INSERT INTO categoria_simples(nome) VALUES (?)");
+                $prep->bindParam(1, $nome, PDO::PARAM_STR, 50);
                 $prep->execute();
 
                 if (isset($_REQUEST['super_categoria']) && $_REQUEST['super_categoria'] != "none") {
                     $super_categoria = $_REQUEST['super_categoria'];
 
                     // verificar se $super_categoria e categoria_simples
-                    $prep = $db->prepare("SELECT nome FROM categoria_simples WHERE nome = :nome");
-                    $prep->bindParam(":nome", $super_categoria);
+                    $prep = $db->prepare("SELECT nome FROM categoria_simples WHERE nome = ?");
+                    $prep->bindParam(1, $super_categoria, PDO::PARAM_STR, 50);
                     $prep->execute();
                     if ($prep->rowCount() > 0) {
                         // se sim, trocar de simples para super_categoria antes de inserir na relacao constituida
-                        $prep = $db->prepare("DELETE FROM categoria_simples WHERE nome = :nome");
-                        $prep->bindParam(":nome", $super_categoria);
+                        $prep = $db->prepare("DELETE FROM categoria_simples WHERE nome = ?");
+                        $prep->bindParam(1, $super_categoria, PDO::PARAM_STR, 50);
                         $prep->execute();
-                        $prep = $db->prepare("INSERT INTO super_categoria(nome) VALUES (:nome)");
-                        $prep->bindParam(":nome", $super_categoria);
+                        $prep = $db->prepare("INSERT INTO super_categoria(nome) VALUES (?)");
+                        $prep->bindParam(1, $super_categoria, PDO::PARAM_STR, 50);
                         $prep->execute();
                     }
 
                     try {
-                        $prep = $db->prepare("INSERT INTO constituida(super_categoria, categoria) VALUES (:super_categoria, :nome)");
-                        $prep->bindParam(":super_categoria", $super_categoria);
-                        $prep->bindParam(":nome", $nome);
+                        $prep = $db->prepare("INSERT INTO constituida(super_categoria, categoria) VALUES (?, ?)");
+                        $prep->bindParam(1, $super_categoria, PDO::PARAM_STR, 50);
+                        $prep->bindParam(2, $nome, PDO::PARAM_STR, 50);
                         $prep->execute();
                     }
                     catch (PDOException $e) {
@@ -60,15 +60,15 @@
             $db->query("start transaction;");
 
             // verificar se existem produtos da categoria a remover
-            $prep = $db->prepare("SELECT ean FROM produto WHERE categoria = :nome");
-            $prep->bindParam(":nome", $nome);
+            $prep = $db->prepare("SELECT ean FROM produto WHERE categoria = ?");
+            $prep->bindParam(1, $nome, PDO::PARAM_STR, 50);
             $prep->execute();
             if ($prep->rowCount() > 0) {
                 // se sim, TODO
             }
 
-            $prep = $db->prepare("DELETE FROM categoria WHERE nome = :nome");
-            $prep->bindParam(":nome", $nome);
+            $prep = $db->prepare("DELETE FROM categoria WHERE nome = ?");
+            $prep->bindParam(1, $nome, PDO::PARAM_STR, 50);
             $prep->execute();
 
             $db->query("commit;");
@@ -95,7 +95,7 @@
         echo("<table border=\"1\" cellspacing=\"5\" style=\"text-align: center\">\n");
         echo("<tr>\n");
         echo("<td><b>Nome</b></td>\n");
-        echo("<td>&nbscp;</td>\n");
+        echo("<td>Remover</td>\n");
         echo("</tr>\n");
         foreach($result as $row){
             echo("<tr>\n");
