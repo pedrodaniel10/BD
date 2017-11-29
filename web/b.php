@@ -130,33 +130,40 @@
               echo("<h5><font color=\"red\">ERRO: EAN tem de ser um inteiro.</font></h5>");
               break;
             case "22007": //invalid date
+            case "22008":
               echo("<h5><font color=\"red\">ERRO: Data inv&aacute;lida.</font></h5>");
               break;
             case "23505": //violates pk_produto
               echo("<h5><font color=\"red\">ERRO: O EAN $ean j&aacute; existe.</font></h5>");
               break;
           }
-          echo("<h5><font color=\"red\">ERRO: {$e->getCode()}.</font></h5>");
+          echo("<h5><font color=\"red\">ERRO: {$e->getCode()}:1.</font></h5>");
           $db->query("ROLLBACK");
+          $end = TRUE;
           //echo("<p>ERROR: {$e->getMessage()}</p>");
         }
 
-        //add forn_sec
-        foreach($forn_sec_selected as $nif){
-          $prep = $db->prepare("INSERT INTO fornece_sec(nif, ean)
-                                VALUES (?,?)");
-          $prep->bindParam(1,$nif,PDO::PARAM_INT);
-          $prep->bindParam(2,$ean,PDO::PARAM_INT);
-          $prep->execute();
-        }
+        if($end){}
+        else{
+          //add forn_sec
+          foreach($forn_sec_selected as $nif){
+            $prep = $db->prepare("INSERT INTO fornece_sec(nif, ean)
+                                  VALUES (?,?)");
+            $prep->bindParam(1,$nif,PDO::PARAM_INT);
+            $prep->bindParam(2,$ean,PDO::PARAM_INT);
+            $prep->execute();
+          }
 
-        $db->query("COMMIT");
+          $db->query("COMMIT");
+          echo("<h5><font color=\"green\">Produto com EAN $ean inserido com sucesso.</font></h5>");
+        }
       }
       echo("<br><br><a href='b.php?mode=insert_form'>Voltar</a><br><br>");
     }
   }
   catch (PDOException $e){
-    echo("<p>ERROR: {$e->getMessage()}</p>");
+    echo("<h5><font color=\"red\">ERRO: {$e->getCode()}:2.</font></h5>");
+    //echo("<p>ERROR: {$e->getMessage()}</p>");
   }
 ?>
   </body>
