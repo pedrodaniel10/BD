@@ -22,17 +22,20 @@ create table categoria
 
 create table categoria_simples
   (nome varchar(50) not null unique,
+  constraint pk_categoria_simples primary key(nome),
    constraint fk_categoria_simples_categoria foreign key(nome) references categoria(nome)
       on delete cascade on update cascade);
 
 create table super_categoria
   (nome varchar(50) not null unique,
+  constraint pk_super_categoria primary key(nome),
    constraint fk_super_categoria_categoria foreign key(nome) references categoria(nome)
       on delete cascade on update cascade);
 
 create table constituida
   (super_categoria varchar(50) not null,
    categoria varchar(50) not null unique,
+   constraint pk_constituida primary key(super_categoria, categoria),
    constraint fk_constituida_super_categoria foreign key(super_categoria) references super_categoria(nome)
       on delete cascade on update cascade,
    constraint fk_constituida_categoria foreign key(categoria) references categoria(nome)
@@ -58,6 +61,7 @@ create table produto
 create table fornece_sec
   (nif int not null,
    ean bigint not null,
+   constraint pk_fornece_sec primary key(nif, ean),
    constraint fk_fornece_sec_fornecedor foreign key(nif) references fornecedor(nif)
       on delete cascade on update cascade,
    constraint fk_fornece_sec_produto foreign key(ean) references produto(ean)
@@ -75,7 +79,6 @@ create table prateleira
    constraint pk_prateleira primary key(nro, lado, altura),
    constraint fk_prateleira_corredor foreign key(nro) references corredor(nro)
       on delete cascade on update cascade);
-   --constraint unique_prateleira unique(nro, lado, altura))
 
 create table planograma
   (ean bigint not null,
@@ -85,11 +88,11 @@ create table planograma
    face int not null,
    unidades int not null,
    loc int not null,
+   constraint pk_planograma primary key(ean, nro, lado, altura),
    constraint fk_planograma_produto foreign key(ean) references produto(ean)
       on delete cascade on update cascade,
    constraint fk_planograma_prateleira foreign key(nro, lado, altura) references prateleira(nro, lado, altura)
-      on delete cascade on update cascade,
-   constraint unique_planograma unique(ean, nro, lado, altura));
+      on delete cascade on update cascade);
 
 create table evento_reposicao
   (operador varchar(80) not null,
@@ -104,8 +107,8 @@ create table reposicao
    operador varchar(80) not null,
    instante timestamp not null,
    unidades int not null,
+   constraint pk_reposicao primary key(ean, nro, lado, altura, operador, instante),
    constraint fk_reposicao_planograma foreign key(ean, nro, lado, altura) references planograma(ean, nro, lado, altura)
       on delete cascade on update cascade,
    constraint fk_reposicao_evento_reposicao foreign key(operador, instante) references evento_reposicao(operador, instante)
-      on delete cascade on update cascade,
-    constraint unique_reposicao unique(ean, nro, lado, altura, operador, instante));
+      on delete cascade on update cascade);

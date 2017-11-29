@@ -2,15 +2,15 @@
   <body>
       <h3>Inserir e remover categorias e sub-categorias</h3>
 <?php
-    error_reporting(E_ALL);
-    ini_set('display_errors',1);
+    //error_reporting(E_ALL);
+    //ini_set('display_errors',1);
 
     try {
         include 'config.php';
 
         $mode = isset($_REQUEST['mode']) ? $_REQUEST['mode'] : "";
         $nome = isset($_REQUEST['nome']) ? $_REQUEST['nome'] : "";
-        if ($mode == "add_cat") {
+        if ($mode == "add_cat" && $nome != "") {
             $db->query("start transaction;");
 
             try {
@@ -46,12 +46,12 @@
                         $prep->execute();
                     }
                     catch (PDOException $e) {
-                        echo("<h5><font color=\"red\">A super categoria escolhida &eacute; inv&aacute;lida.</font></h5>");
+                        echo("<h5><font color=\"red\">ERRO: A super categoria escolhida &eacute; inv&aacute;lida.</font></h5>");
                     }
                 }
             }
             catch (PDOException $e) {
-                echo("<h5><font color=\"red\">O nome da categoria escolhida j&aacute; existe.</font></h5>");
+                echo("<h5><font color=\"red\">ERRO: O nome da categoria escolhida j&aacute; existe.</font></h5>");
             }
 
             $db->query("commit;");
@@ -63,7 +63,7 @@
             $prep->execute();
             $produtosAssoc = $prep->fetch();
             if ($produtosAssoc['count'] > 0) {
-                echo("<h5><font color=\"red\">Existe {$produtosAssoc['count']} produto(s) associado(s) a esta categoria. Devem ser eliminados primeiro.</font></h5>");
+                echo("<h5><font color=\"red\">ERRO: Existe {$produtosAssoc['count']} produto(s) associado(s) a esta categoria. Devem ser eliminados primeiro.</font></h5>");
             }
             else {
                 $prep = $db->prepare("DELETE FROM categoria WHERE nome = ?");
@@ -106,7 +106,7 @@
 
     }
     catch (PDOException $e){
-      echo("<p>ERROR: {$e->getMessage()}</p>");
+      //echo("<p>ERROR: {$e->getMessage()}</p>");
     }
 ?>
   </body>
