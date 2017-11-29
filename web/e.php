@@ -2,8 +2,8 @@
   <body>
     <h3>Listar sub-categorias de uma super-categoria</h3>
     <form action="e.php" method="post">
-      <p><input type="hidden" name="mode" value="list"/></p>
-      <p>Nome: <input type="text" name="nome"/>
+      <p><input type="hidden" name="mode" value="search"/></p>
+      <p>Nome: <input type="text" name="nome_search"/>
         <input type="submit" value="Procurar"/>
       </p>
     </form>
@@ -55,6 +55,48 @@
         echo("</table>\n");
         echo("<br><br><a href='index.html'>Voltar</a><br><br>");
     }
+
+    elseif ($mode == "search") {
+
+      $nome = $_REQUEST['nome_search'];
+      $nome = "%" . $nome;
+      $nome = $nome . "%";
+
+      if ($nome != "%%") {
+          $prep = $db->prepare("SELECT nome FROM super_categoria WHERE nome LIKE :nome");
+          try{
+            $prep->bindParam(":nome", $nome);
+            $prep->execute();
+          }
+          catch (PDOException $e){
+            echo("<p>ERRO: Nome nao valido.</p>");
+          }
+          $result = $prep->fetchAll();
+      }
+
+      else {
+          $result = [];
+      }
+
+      if($result != FALSE || $result != []){
+        echo("<table border=\"1\" cellspacing=\"5\" style=\"text-align: center\">\n");
+        echo("<tr>\n");
+        echo("<td><b>Nome</b></td>\n");
+        echo("<td><b>Listar</b></td>\n");
+        echo("</tr>\n");
+      }
+      $number_rows = count($result);
+      echo("<p>Foram encontrada(s) $number_rows categoria(s).</p>");
+      foreach($result as $row){
+        echo("<tr>\n");
+        echo("<td>{$row['nome']}</td>\n");
+        echo("<td><a href=\"e.php?mode=list&nome={$row['nome']}\">Listar sub-categorias</a></td>\n");
+        echo("</tr>\n");
+      }
+      echo("</table>\n");
+      echo("<br><br><a href='e.php?mode=home'>Voltar</a><br><br>");
+    }
+
     elseif ($mode == "list"){
         echo("<h3>Nome = $nome</h3>");
         $prep = $db->prepare("SELECT categoria
@@ -66,10 +108,16 @@
 
         checkSubCats($GLOBALS['resultCats'], $db);
 
-        echo("<table border=\"1\" cellspacing=\"5\" style=\"text-align: center\">\n");
-        echo("<tr>\n");
-        echo("<td><b>Nome</b></td>\n");
-        echo("</tr>\n");
+        if($GLOBALS['resultCats'] != FALSE || $GLOBALS['resultCats'] != []){
+            echo("<table border=\"1\" cellspacing=\"5\" style=\"text-align: center\">\n");
+            echo("<tr>\n");
+            echo("<td><b>Nome</b></td>\n");
+            echo("</tr>\n");
+        }
+
+        $number_rows = count($GLOBALS['resultCats']);
+        echo("<p>Foram encontrado(s) $number_rows sub-categorias.</p>");
+
         foreach($GLOBALS['resultCats'] as $row){
             echo("<tr>\n");
             echo("<td>{$row['categoria']}</td>\n");
