@@ -57,7 +57,21 @@
             $db->query("commit;");
         }
         if ($mode == "remove") {
-            //
+            $db->query("start transaction;");
+
+            // verificar se existem produtos da categoria a remover
+            $prep = $db->prepare("SELECT ean FROM produto WHERE categoria = :nome");
+            $prep->bindParam(":nome", $nome);
+            $prep->execute();
+            if ($prep->rowCount() > 0) {
+                // se sim, TODO
+            }
+
+            $prep = $db->prepare("DELETE FROM categoria WHERE nome = :nome");
+            $prep->bindParam(":nome", $nome);
+            $prep->execute();
+
+            $db->query("commit;");
         }
 
         echo("<h4>Criar categoria</h4>");
