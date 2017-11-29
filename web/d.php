@@ -47,7 +47,7 @@
         $prep->execute();
       }
       catch (PDOException $e){
-        echo("<p>ERRO: EAN tem de ser um inteiro.</p>");
+        echo("<h5><font color=\"red\">ERRO: EAN tem de ser um inteiro.</font></h5>");
       }
       $result = $prep->fetchAll();
       if($result != FALSE || $result != []){
