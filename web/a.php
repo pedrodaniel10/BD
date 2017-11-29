@@ -13,17 +13,50 @@
         if ($mode == "add_cat") {
             $db->query("start transaction;");
 
-            $prep = $db->prepare("INSERT INTO categoria(nome) VALUES (:nome)");
-            $prep->bindParam(":nome", $nome);
-            $prep->execute();
+            try {
+                $prep = $db->prepare("INSERT INTO categoria(nome) VALUES (:nome)");
+                $prep->bindParam(":nome", $nome);
+                $prep->execute();
 
-            $prep = $db->prepare("INSERT INTO categoria_simples(nome) VALUES (:nome)");
-            $prep->bindParam(":nome", $nome);
-            $prep->execute();
+                $prep = $db->prepare("INSERT INTO categoria_simples(nome) VALUES (:nome)");
+                $prep->bindParam(":nome", $nome);
+                $prep->execute();
+
+                if (isset($_REQUEST['super_categoria']) && $_REQUEST['super_categoria'] != "none") {
+                    $super_categoria = $_REQUEST['super_categoria'];
+
+                    // verificar se $super_categoria e categoria_simples
+                    $prep = $db->prepare("SELECT nome FROM categoria_simples WHERE nome = :nome");
+                    $prep->bindParam(":nome", $super_categoria);
+                    $prep->execute();
+                    if ($prep->rowCount() > 0) {
+                        // se sim, trocar de simples para super_categoria antes de inserir na relacao constituida
+                        $prep = $db->prepare("DELETE FROM categoria_simples WHERE nome = :nome");
+                        $prep->bindParam(":nome", $super_categoria);
+                        $prep->execute();
+                        $prep = $db->prepare("INSERT INTO super_categoria(nome) VALUES (:nome)");
+                        $prep->bindParam(":nome", $super_categoria);
+                        $prep->execute();
+                    }
+
+                    try {
+                        $prep = $db->prepare("INSERT INTO constituida(super_categoria, categoria) VALUES (:super_categoria, :nome)");
+                        $prep->bindParam(":super_categoria", $super_categoria);
+                        $prep->bindParam(":nome", $nome);
+                        $prep->execute();
+                    }
+                    catch (PDOException $e) {
+                        echo("<h5><font color=\"red\">A super categoria escolhida &eacute; inv&aacute;lida.</font></h5>");
+                    }
+                }
+            }
+            catch (PDOException $e) {
+                echo("<h5><font color=\"red\">O nome da categoria escolhida j&aacute; existe.</font></h5>");
+            }
 
             $db->query("commit;");
         }
-        if ($mode == "delete") {
+        if ($mode == "remove") {
             //
         }
 
@@ -53,7 +86,7 @@
         foreach($result as $row){
             echo("<tr>\n");
             echo("<td>{$row['nome']}</td>\n");
-            echo("<td><a href=\"a.php?mode=delete&nome={$row['nome']}\">Remover</a></td>\n");
+            echo("<td><a href=\"a.php?mode=remove&nome={$row['nome']}\">Remover</a></td>\n");
             echo("</tr>\n");
         }
         echo("</table>\n");
