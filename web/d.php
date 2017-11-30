@@ -55,7 +55,7 @@
         echo("<tr>\n");
         echo("<td><b>EAN</b></td>\n");
         echo("<td><b>Designa&ccedil;&atilde;o</b></td>\n");
-        echo("<td><b>Listar</b></td>\n");
+        echo("<td><b>Alterar</b></td>\n");
         echo("</tr>\n");
       }
       $number_rows = count($result);
