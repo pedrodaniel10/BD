@@ -137,7 +137,7 @@
               echo("<h5><font color=\"red\">ERRO: O EAN $ean j&aacute; existe.</font></h5>");
               break;
           }
-          echo("<h5><font color=\"red\">ERRO: {$e->getCode()}:1.</font></h5>");
+          //echo("<h5><font color=\"red\">ERRO: {$e->getCode()}:2.</font></h5>");
           $db->query("ROLLBACK");
           $end = TRUE;
           //echo("<p>ERROR: {$e->getMessage()}</p>");
@@ -180,7 +180,7 @@
         }
         catch (PDOException $e){
           echo("<h5><font color=\"red\">ERRO: {$e->getCode()}:1.</font></h5>");
-          echo("<p>ERROR: {$e->getMessage()}</p>");
+          //echo("<p>ERROR: {$e->getMessage()}</p>");
         }
       }
 
@@ -242,7 +242,7 @@
     }
   }
   catch (PDOException $e){
-    echo("<h5><font color=\"red\">ERRO: {$e->getCode()}:2.</font></h5>");
+    echo("<h5><font color=\"red\">ERRO: {$e->getCode()}:3.</font></h5>");
     //echo("<p>ERROR: {$e->getMessage()}</p>");
   }
 ?>
