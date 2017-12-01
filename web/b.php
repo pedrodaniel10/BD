@@ -240,15 +240,6 @@
         echo("<br><br><a href='b.php?mode=home'>Voltar</a><br><br>");
       }
     }
-    elseif($mode == "remove_product"){
-      $ean = isset($_REQUEST['ean']) ? $_REQUEST['ean'] : "";
-
-      if($ean != ""){
-        $prep = $db->prepare("DELETE FROM produto WHERE ean = ?");
-        $prep->bindParam(1,$ean,PDO::PARAM_INT);
-        $prep->execute();
-      }
-    }
   }
   catch (PDOException $e){
     echo("<h5><font color=\"red\">ERRO: {$e->getCode()}:2.</font></h5>");
